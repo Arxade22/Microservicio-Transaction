@@ -1,0 +1,36 @@
+    APls para cambio de dolar
+Caracteristicas:
+El visitante puede visualizar y probar los tipos de cambio ($ <=> S/)
+O Para confirmar el cambio debe loguearse. En caso de no estar logueado debe registrarse:
+Correo
+Nombres completos
+Documento de identidad Cuentas bancarias (S y S/). Pueden ser múltiples por cada moneda.
+
+
+El sistema valida si tiene algún beneficio (aleatorio) y le asigna un 2% extra al cambio a favor del usuario. 
+
+El cambio se realiza con los siguientes pasos: 
+
+1. El usuario debe seleccionar la cuenta de cargo y de destino, 
+según el tipo de cambio seleccionado
+
+2. Se debe iniciar un contador de 2 min.
+
+Se debe agregar el código de operación (código de transferencia bancaria)
+ y adjuntar imagen de
+comprobante bancario
+
+Con un delay de 10 segundos 
+se debe resolver la operación (aleatoriamente éxito o fracaso).
+
+5. En caso de éxito, se debe mostrar el mensaje "Cambio exitoso! 
+En breve se visualizará el cambio en tu
+Cuenta destino.
+
+6. En caso de fracaso, debe finalizar el contador y
+ volver a iniciar el paso 1.
+
+7. En caso el contador termine en cero, ya no se debe permitir
+ realizar ninguna acción.
+Toda la información (usuarios y link de archivos) deben guardarse 
+en una base de datos
