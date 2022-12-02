@@ -24,11 +24,14 @@ export const handler: Handler = async (
 ) => {
   const appContext = await NestFactory.createApplicationContext(AppModule);
   const appService = appContext.get(LambdaService); //TODO esto esta para localhost
-  const user = {
+  const transaction = {
     name: `${event.queryStringParameters?.name}`,
+    cod_operacion: `${event.queryStringParameters?.cod_operacion}`,
+    monto: `${event.queryStringParameters?.monto}`,
+    message: `${event.queryStringParameters?.message}`,
   };
   return {
-    body: await appService.buildPdf(user), //TODO es buffer base64
+    body: await appService.buildPdf(transaction), //TODO es buffer base64
     headers: {
       'Content-type': 'application/pdf',
     },
