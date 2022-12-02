@@ -1,27 +1,31 @@
 const AWS = require('aws-sdk');
+const { config } = require('../config/dynamodb-local');
 
-const getTransactionById = async (event) =>{
-   const dynamodb = new AWS.DynamoDB.DocumentClient();
-   const {id}  = event.pathParameters;
-   
-   const result = await dynamodb.get({
-     TableName:'TransactionTable',
-     Key: {
-        id
-     }
-   }).promise()
+const dynamodb = new AWS.DynamoDB.DocumentClient(
+  process.env.NODE_ENV === 'test' ? config : {}
+);
 
-   const task = result.Item
+const getTransactionById = async (event) => {
+  const { id } = event.pathParameters;
+  const result = await dynamodb
+    .get({
+      TableName: 'TransactionTable',
+      Key: {
+        id,
+      },
+    })
+    .promise();
 
-   return {
-    status : 200 , 
+  const task = result.Item;
+
+  return {
+    status: 200,
     body: {
-        task
-    }
-   }
-
+      task,
+    },
+  };
 };
 
 module.exports = {
-  getTransactionById
+  getTransactionById,
 };

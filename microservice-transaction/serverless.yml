@@ -5,17 +5,16 @@ frameworkVersion: '3'
 plugins:
   - serverless-auto-swagger
 
-
 provider:
   name: aws
   runtime: nodejs14.x
   iamRoleStatements:
     - Effect: Allow
       Action:
-       - dynamodb:*
+        - dynamodb:*
       Resource:
-       - arn:aws:dynamodb:us-east-1:488791404709:table/TransactionTable
- 
+        - arn:aws:dynamodb:us-east-1:488791404709:table/TransactionTable
+
 functions:
   createTransaction:
     handler: src/services/createTransaction.createTransaction
@@ -34,18 +33,18 @@ functions:
     events:
       - httpApi:
           path: /transaction/{id}
-          method: get                
+          method: get
 
 resources:
   Resources:
     TaskTable:
-       Type: AWS::DynamoDB::Table
-       Properties:
-          TableName: TransactionTable
-          BillingMode: PAY_PER_REQUEST
-          AttributeDefinitions:
-            - AttributeName: id
-              AttributeType: S
-          KeySchema:
-            - AttributeName: id
-              KeyType: HASH 
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: TransactionTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH

@@ -1,55 +1,74 @@
-const {v4} = require('uuid')
+const { v4 } = require('uuid');
 const AWS = require('aws-sdk');
+const { config } = require('../config/dynamodb-local');
 
-const createTransaction = async(event) => {
-    const dynamodb = new AWS.DynamoDB.DocumentClient(); 
-    const cuenta_inicial  = {
-        "numero_ini" : "1223124112",
-        "saldo_cuenta" : "150 ",
-    }
-    const cuenta_destino  = {
-        "numero_destino" : "99999999999999",
-        "saldo_destino" : "987563626 ",
-    }
-    const{cod_operacion, comp_bancario, message} = JSON.parse(event.body);
-    const{numero_ini, saldo_cuenta } = cuenta_inicial;
-    const{numero_destino , saldo_destino } = cuenta_destino;
-    // monto a transferir 
-    const createdAt = new Date();
-    const id = v4(); 
-    const nombre = "Martin"
-    const correo = "braulio.villegas2019@gmail.com"
-    // const message = await ({
-     
-    // }).promise()
+const dynamodb = new AWS.DynamoDB.DocumentClient(
+  process.env.NODE_ENV === 'test' ? config : {}
+);
 
-    const newTransaction = {
-        id : id,
-        nombre : nombre,
-        correo: correo,
-        cod_operacion : cod_operacion,
-        comp_bancario : comp_bancario,
-        numero_ini: numero_ini,
-        saldo_cuenta:saldo_cuenta,
-        numero_destino:numero_destino,
-        saldo_destino:saldo_destino,
-        message: message, 
-        fechaCrea: createdAt,
-        actualizado: false 
+const createTransaction = async (event) => {
+  const {
+    numero_ini,
+    saldo_cuenta,
+    numero_destino,
+    saldo_destino,
+    montoTrasferido,
+    nombre,
+    correo,
+  } = JSON.parse(event.body);
+
+  const createdAt = new Date();
+  const id = v4();
+
+  // Generar codigo Transaccion
+  let random = Math.random();
+  random = random * 100 + 10000;
+  cod_operacion = Math.trunc(random);
+
+  const newTransaction = {
+    id: id,
+    fechaCrea: createdAt,
+    cod_operacion: cod_operacion,
+    nombre: nombre,
+    correo: correo,
+    numero_ini: numero_ini,
+    saldo_cuenta: saldo_cuenta,
+    numero_destino: numero_destino,
+    saldo_destino: saldo_destino,
+    montoTrasferido: montoTrasferido,
+  };
+
+  //   setTimeout(async () => {
+  try {
+    let generarRandomError = Boolean(Math.round(Math.random()));
+    if (process.env.NODE_ENV === 'test') {
+      generarRandomError = false;
+    }
+    if (generarRandomError) {
+      return {
+        status: 400,
+        message: 'Ups, ocurrio un error en la transacccion',
+      };
     }
 
-    await dynamodb.put({
+    await dynamodb
+      .put({
         TableName: 'TransactionTable',
-        Item: newTransaction
-    }).promise()
+        Item: newTransaction,
+      })
+      .promise();
 
-    return{
-        statusCode: 200,
-        body: JSON.stringify(newTransaction)
-    }
+    return {
+      status: 200,
+      body: JSON.stringify(newTransaction),
+      message: 'Transacción exitosa',
+    };
+  } catch (error) {
+    console.log(error);
+  }
+  //   }, 10000);
 };
 
-
 module.exports = {
-    createTransaction,
+  createTransaction,
 };
